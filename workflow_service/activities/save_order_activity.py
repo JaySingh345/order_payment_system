@@ -20,7 +20,7 @@ async def save_order(order: Order, transaction_id: str, tracking_id: str):
             tracking_id=tracking_id,
         )
 
-        db.add(db_order)
+        db.add()
         db.commit()
     finally:
         db.close()
