@@ -24,7 +24,7 @@ async def send_email(order: Order, tracking_id: str, transaction_id: str) -> Non
 
     message = f"Order ID: {order.order_id} \n Transaction ID: {transaction_id} \n tracking ID: {tracking_id} \n Amount: {order.amount} \n items and quantity {items_message}"
 
-    text = f"Subject:{Subject}\n\n {message}"
+    text = f"Subject:{Subject} \n\n {message}"
 
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
