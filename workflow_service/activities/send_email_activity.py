@@ -1,8 +1,33 @@
+import smtplib
+import os
+from dotenv import load_dotenv
 from temporalio import activity
 from shared.models import Order
+load_dotenv()
 
 @activity.defn
-async def send_email(order:Order,tracking_id:str) -> None:
-    print(f"sending mail to {order.email}")
-    print(f"tracking id - {tracking_id}")
+async def send_email(order: Order, tracking_id: str,transaction_id:str) -> None:
+    sender_mail = os.getenv("EMAil_USER")
+    sender_pass = os.getenv("EMAIL_PASS")
+    reciever_mail = order.email
+    if sender_pass is None or sender_mail is None:
+        raise ValueError("EMAIL_USER or EMAIL_PASS is not set")
+
+    Subject = "Order purchase completed"
+
+    items_message = ""
+
+    for item in order.items:
+        items_message += f"- {item['name']} x {item['quantity']}\n"
+
+    message = f"Order ID: {order.order_id} \n Transaction ID: {transaction_id} \n tracking ID: {tracking_id} \n Amount: {order.amount} \n items and quantity {items_message}" 
     
+    text = f"Subject:{Subject}\n\n {message}"
+
+    server = smtplib.SMTP("smtp.gmail.com",587)
+    server.starttls()
+
+    server.login(sender_mail, sender_pass)
+    server.sendmail(sender_mail,reciever_mail,text)
+
+    print(f"Email has been sent to {reciever_mail}")

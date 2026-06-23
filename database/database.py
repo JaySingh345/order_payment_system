@@ -1,17 +1,25 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker,declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base
+import os
+from dotenv import load_dotenv
 
-engine = create_engine("postgresql://postgres:root@localhost:5432/order_payment_db")
+load_dotenv()
 
-session = sessionmaker(autocommit = False,autoflush = False,bind = engine)
+url = os.getenv("DATABASE_URL")
+if url is None:
+    raise ValueError("DATAbASE_URL not set")
+
+
+engine = create_engine(url)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
+
 def get_db():
-    db =session()
+    db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-
-        
