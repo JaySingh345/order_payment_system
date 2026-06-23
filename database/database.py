@@ -7,7 +7,7 @@ load_dotenv()
 
 url = os.getenv("DATABASE_URL")
 if url is None:
-    raise ValueError("DATAbASE_URL not set")
+    raise ValueError("DATABASE_URL not set")
 
 
 engine = create_engine(url)
