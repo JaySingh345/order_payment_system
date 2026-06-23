@@ -11,13 +11,13 @@ class OrderDB(Base):
     address = Column(String, nullable=False)
     email = Column(String, nullable=False)
     status = Column(String, default="CREATED")
-    transaction_id = Column(String,unique=True)
-    tracking_id = Column(String,unique=True)
+    transaction_id = Column(String, unique=True)
+    tracking_id = Column(String, unique=True)
 
 
 class InventoryDB(Base):
     __tablename__ = "inventory"
 
-    product_name = Column(String,primary_key=True)
-    quantity = Column(Integer,nullable=False)
-    amount = Column(Float,nullable=False)
+    product_name = Column(String, primary_key=True)
+    quantity = Column(Integer, nullable=False)
+    amount = Column(Float, nullable=False)

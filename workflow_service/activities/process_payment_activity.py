@@ -11,7 +11,11 @@ async def process_payment(order: Order):
     try:
         total_amount = 0
         for items in order.items:
-            product = (db.query(InventoryDB).filter(InventoryDB.product_name == items["name"]).first())
+            product = (
+                db.query(InventoryDB)
+                .filter(InventoryDB.product_name == items["name"])
+                .first()
+            )
 
             if product is not None:
                 total_amount += product.amount * items["quantity"]

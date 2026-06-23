@@ -27,7 +27,7 @@ class OrderWorkflow:
         if not await self.execute(validate_order, order):
             return "Order validation failed"
 
-        transaction_id,amount = await self.execute(process_payment, order)
+        transaction_id, amount = await self.execute(process_payment, order)
 
         order.amount = amount
         if not await self.execute(reserve_inventory, order):
@@ -35,7 +35,7 @@ class OrderWorkflow:
 
         tracking_id = await self.execute(ship_order, order)
 
-        await self.execute(send_email, order, tracking_id,transaction_id)
+        await self.execute(send_email, order, tracking_id, transaction_id)
 
         await self.execute(save_order, order, transaction_id, tracking_id)
 

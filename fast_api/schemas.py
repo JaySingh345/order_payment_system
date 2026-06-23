@@ -12,3 +12,14 @@ class OrderRequest(BaseModel):
     items: list[item]
     address: str
     email: str
+
+
+class DeleteInventory(BaseModel):
+    product_name: str
+    quantity: int
+
+
+class AddInventory(BaseModel):
+    product_name: str
+    quantity: int
+    amount: float

@@ -23,7 +23,7 @@ async def main():
             send_email,
             ship_order,
             validate_order,
-            save_order
+            save_order,
         ],
     )
     print("worker started")

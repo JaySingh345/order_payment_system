@@ -1,5 +1,5 @@
 from database.database import engine
-from database.models import OrderDB,InventoryDB
+from database.models import OrderDB, InventoryDB
 
 OrderDB.metadata.create_all(bind=engine)
 

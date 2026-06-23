@@ -1,12 +1,12 @@
-from fastapi import FastAPI,HTTPException
+from fastapi import FastAPI, HTTPException
 from temporalio.client import Client
 from workflow_service.workflows.order_workflow import OrderWorkflow
-from fast_api.schemas import OrderRequest
+from fast_api.schemas import OrderRequest, DeleteInventory, AddInventory
 from shared.models import Order
 from sqlalchemy.orm import Session
 from fastapi import Depends
 from database.database import get_db
-from database.models import OrderDB
+from database.models import OrderDB, InventoryDB
 
 app = FastAPI()
 
@@ -30,7 +30,7 @@ async def create_order(order_request: OrderRequest, db: Session = Depends(get_db
         address=order_request.address,
         email=order_request.email,
     )
-    
+
     assert client is not None
     handle = await client.start_workflow(
         OrderWorkflow.run,
@@ -44,28 +44,85 @@ async def create_order(order_request: OrderRequest, db: Session = Depends(get_db
 @app.get("/api/orders")
 def get_all_orders(db: Session = Depends(get_db)):
     orders = db.query(OrderDB).all()
-    print(orders)
     return orders
 
+
 @app.get("/api/orders/id/{id}")
-def get_order_by_order_id(id : int,db: Session = Depends(get_db)):
+def get_order_by_order_id(id: int, db: Session = Depends(get_db)):
     product = db.query(OrderDB).filter(OrderDB.order_id == id).first()
-    
+
     if not product:
-        raise HTTPException (status_code= 404, detail = "product not found")
-    
+        raise HTTPException(status_code=404, detail="product not found")
+
     return product
 
 
 @app.get("/api/orders/mail/{mail}")
-def get_order_by_mail(mail : str,db: Session = Depends(get_db)):
+def get_order_by_mail(mail: str, db: Session = Depends(get_db)):
     product = db.query(OrderDB).filter(OrderDB.email == mail).all()
-    
+
     if not product:
-        raise HTTPException (status_code= 404, detail = "product not found")
-    
-    # total_product = ""
-    # for items in product:
-    #     total_product += product
+        raise HTTPException(status_code=404, detail="product not found")
 
     return product
+
+
+@app.get("/api/inventory/quantity")
+def products_in_inventory(db: Session = Depends(get_db)):
+    inventory = db.query(InventoryDB).all()
+
+    return inventory
+
+
+@app.post("/api/inventory/add")
+def add_products_inventory(request: AddInventory, db: Session = Depends(get_db)):
+    product = db.query(InventoryDB).filter(
+        InventoryDB.product_name == request.product_name
+    ).first()
+
+    if product is not None:
+        product.quantity += request.quantity
+        product.amount = request.amount
+
+    else:
+        add_product = InventoryDB(
+            product_name=request.product_name,
+            quantity=request.quantity,
+            amount=request.amount,
+        )
+        db.add(add_product)
+    db.commit()
+    db.refresh(product)
+
+    return {
+        "messege": "Inventory updated",
+        "product name ": product.product_name,
+        "quantity": product.quantity,
+        "amount": product.amount,
+    }
+
+
+@app.delete("/api/inventory/delete")
+def delete_products_inventory_by_product_name(
+    request: DeleteInventory, db: Session = Depends(get_db)
+):
+    product = (
+        db.query(InventoryDB)
+        .filter(InventoryDB.product_name == request.product_name)
+        .first()
+    )
+
+    if not product:
+        raise HTTPException(status_code=404, detail="product not found")
+
+    if product.quantity < request.quantity:
+        raise HTTPException(status_code=400, detail="insufficient quantity avaiable")
+
+    product.quantity -= request.quantity
+
+    if product.quantity == 0:
+        db.delete(product)
+
+    db.commit()
+
+    return f"inventory updated successfully \n remaining quantity {product.quantity}"

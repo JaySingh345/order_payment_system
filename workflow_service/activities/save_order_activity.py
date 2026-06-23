@@ -1,9 +1,11 @@
-from temporalio import activity 
+from temporalio import activity
 from shared.models import Order
 from database.database import SessionLocal
 from database.models import OrderDB
+
+
 @activity.defn
-async  def save_order(order:Order,transaction_id:str,tracking_id:str):
+async def save_order(order: Order, transaction_id: str, tracking_id: str):
     db = SessionLocal()
     try:
         db_order = OrderDB(
@@ -14,8 +16,8 @@ async  def save_order(order:Order,transaction_id:str,tracking_id:str):
             address=order.address,
             email=order.email,
             status="COMPLETED",
-            transaction_id = transaction_id,
-            tracking_id = tracking_id
+            transaction_id=transaction_id,
+            tracking_id=tracking_id,
         )
 
         db.add(db_order)

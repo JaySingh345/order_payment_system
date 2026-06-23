@@ -3,10 +3,12 @@ import os
 from dotenv import load_dotenv
 from temporalio import activity
 from shared.models import Order
+
 load_dotenv()
 
+
 @activity.defn
-async def send_email(order: Order, tracking_id: str,transaction_id:str) -> None:
+async def send_email(order: Order, tracking_id: str, transaction_id: str) -> None:
     sender_mail = os.getenv("EMAil_USER")
     sender_pass = os.getenv("EMAIL_PASS")
     reciever_mail = order.email
@@ -20,14 +22,14 @@ async def send_email(order: Order, tracking_id: str,transaction_id:str) -> None:
     for item in order.items:
         items_message += f"- {item['name']} x {item['quantity']}\n"
 
-    message = f"Order ID: {order.order_id} \n Transaction ID: {transaction_id} \n tracking ID: {tracking_id} \n Amount: {order.amount} \n items and quantity {items_message}" 
-    
+    message = f"Order ID: {order.order_id} \n Transaction ID: {transaction_id} \n tracking ID: {tracking_id} \n Amount: {order.amount} \n items and quantity {items_message}"
+
     text = f"Subject:{Subject}\n\n {message}"
 
-    server = smtplib.SMTP("smtp.gmail.com",587)
+    server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
 
     server.login(sender_mail, sender_pass)
-    server.sendmail(sender_mail,reciever_mail,text)
+    server.sendmail(sender_mail, reciever_mail, text)
 
     print(f"Email has been sent to {reciever_mail}")
