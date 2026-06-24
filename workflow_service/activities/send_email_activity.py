@@ -8,7 +8,9 @@ load_dotenv()
 
 
 @activity.defn
-async def send_email(order: Order, tracking_id: str, transaction_id: str,order_id: int) -> None:
+async def send_email(
+    order: Order, tracking_id: str, transaction_id: str, order_id: int
+) -> None:
     print("step 6")
     sender_mail = os.getenv("EMAIL_USER")
     sender_pass = os.getenv("EMAIL_PASS")
