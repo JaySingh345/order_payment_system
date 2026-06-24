@@ -4,7 +4,7 @@ from database.database import Base
 
 class OrderDB(Base):
     __tablename__ = "orders"
-    order_id = Column(Integer, primary_key=True,autoincrement=True)
+    order_id = Column(Integer, primary_key=True, autoincrement=True)
     customer_id = Column(Integer, nullable=False)
     amount = Column(Float, nullable=False)
     items = Column(JSON, nullable=False)
