@@ -21,3 +21,12 @@ class InventoryDB(Base):
     product_name = Column(String, primary_key=True)
     quantity = Column(Integer, nullable=False)
     amount = Column(Float, nullable=False)
+
+class CustomerDB(Base):
+    __tablename__ = "customers"
+
+    customer_id = Column(Integer,primary_key=True,autoincrement=True)
+    name = Column(String,nullable=False)
+    email = Column(String,nullable=False)
+    password = Column(String,nullable=False)
+

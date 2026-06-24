@@ -7,10 +7,8 @@ class item(BaseModel):
 
 
 class OrderRequest(BaseModel):
-    customer_id: int
     items: list[item]
     address: str
-    email: str
 
 
 class DeleteInventory(BaseModel):
@@ -22,3 +20,12 @@ class AddInventory(BaseModel):
     product_name: str
     quantity: int
     amount: float
+
+class RegisterUser(BaseModel):
+    name: str
+    email: str
+    password:str
+
+class LoginUser(BaseModel):
+    email: str
+    password: str
