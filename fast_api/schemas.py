@@ -7,7 +7,6 @@ class item(BaseModel):
 
 
 class OrderRequest(BaseModel):
-    order_id: int
     customer_id: int
     items: list[item]
     address: str

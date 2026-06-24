@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 from fastapi import Depends
 from database.database import get_db
 from database.models import OrderDB, InventoryDB
+import uuid
+
 
 app = FastAPI()
 
@@ -23,8 +25,8 @@ async def startup():
 async def create_order(order_request: OrderRequest, db: Session = Depends(get_db)):
 
     order = Order(
-        order_id=order_request.order_id,
-        customer_id=order_request.customer_id,
+        order_id=0,
+        customer_id=order_request.customer_id, 
         amount=0,
         items=[item.model_dump() for item in order_request.items],
         address=order_request.address,
@@ -35,7 +37,7 @@ async def create_order(order_request: OrderRequest, db: Session = Depends(get_db
     handle = await client.start_workflow(
         OrderWorkflow.run,
         order,
-        id=f"order-{order.order_id}",
+        id=f"order-{uuid.uuid4()}",
         task_queue="order-task-queue",
     )
     return {"workflow_id": handle.id}

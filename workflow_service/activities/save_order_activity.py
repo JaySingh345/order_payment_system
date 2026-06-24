@@ -8,8 +8,8 @@ from database.models import OrderDB
 async def save_order(order: Order, transaction_id: str, tracking_id: str):
     db = SessionLocal()
     try:
+        print("step 5")
         db_order = OrderDB(
-            order_id=order.order_id,
             customer_id=order.customer_id,
             amount=order.amount,
             items=order.items,
@@ -20,7 +20,11 @@ async def save_order(order: Order, transaction_id: str, tracking_id: str):
             tracking_id=tracking_id,
         )
 
-        db.add()
+        db.add(db_order)
         db.commit()
+        db.refresh(db_order)
+        print("Order saved in the database")
+        print(f"Your order id is : {db_order.order_id}")
+        return db_order.order_id
     finally:
         db.close()

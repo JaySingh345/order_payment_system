@@ -9,6 +9,7 @@ from database.models import InventoryDB
 async def process_payment(order: Order):
     db = SessionLocal()
     try:
+        print("step 2")
         total_amount = 0
         for items in order.items:
             product = (
@@ -25,5 +26,7 @@ async def process_payment(order: Order):
         db.close()
 
     transaction_id = str(uuid.uuid4())
+    print("Payment approved")
+    print(f"Transaction id is {transaction_id}")
 
     return transaction_id, total_amount

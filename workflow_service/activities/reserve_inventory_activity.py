@@ -8,6 +8,7 @@ from database.database import SessionLocal
 async def reserve_inventory(order: Order) -> bool:
     db = SessionLocal()
     try:
+        print("step 3")
         for item in order.items:
             product = (
                 db.query(InventoryDB)

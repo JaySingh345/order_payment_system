@@ -7,18 +7,17 @@ from database.database import SessionLocal
 @activity.defn
 async def validate_order(order: Order) -> bool:
 
-    print("valedating order", order.order_id)
+    # print("validating order", order.order_id)
     db = SessionLocal()
     try:
         for items in order.items:
+            print("step 1")
             print("checking item", items)
             product = (
                 db.query(InventoryDB)
                 .filter(InventoryDB.product_name == items["name"])
                 .first()
             )
-
-            print("product =", product)
 
             if product is None:
                 print(f"{items['name']} product do not exist")
