@@ -26,7 +26,7 @@ async def create_order(order_request: OrderRequest, db: Session = Depends(get_db
 
     order = Order(
         order_id=0,
-        customer_id=order_request.customer_id, 
+        customer_id=order_request.customer_id,
         amount=0,
         items=[item.model_dump() for item in order_request.items],
         address=order_request.address,
@@ -78,9 +78,11 @@ def products_in_inventory(db: Session = Depends(get_db)):
 
 @app.post("/api/inventory/add")
 def add_products_inventory(request: AddInventory, db: Session = Depends(get_db)):
-    product = db.query(InventoryDB).filter(
-        InventoryDB.product_name == request.product_name
-    ).first()
+    product = (
+        db.query(InventoryDB)
+        .filter(InventoryDB.product_name == request.product_name)
+        .first()
+    )
 
     if product is not None:
         product.quantity += request.quantity
