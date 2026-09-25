@@ -13,7 +13,7 @@ from workflow_service.activities.save_order_activity import save_order
 
 from temporalio.common import RetryPolicy
 
-
+import asyncio
 @workflow.defn
 class OrderWorkflow:
     def __init__(self):
@@ -45,6 +45,8 @@ class OrderWorkflow:
         await workflow.wait_condition(lambda: self.order_approved)
 
         transaction_id, amount = await self.execute(process_payment, order)
+
+        await asyncio.sleep(10)
 
         order.amount = amount
         if not await self.execute(reserve_inventory, order):

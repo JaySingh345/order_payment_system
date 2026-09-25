@@ -28,8 +28,6 @@ def register(
         request: RegisterUser,
         db: Session = Depends(get_db)
 ):
-    
-
 
     user = CustomerDB(
         name=request.name,
